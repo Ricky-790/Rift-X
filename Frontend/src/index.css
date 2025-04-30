@@ -1,0 +1,66 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 250 25% 5%;
+    --foreground: 0 0% 95%;
+
+    --card: 250 25% 8%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 250 25% 5%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 105 79% 52%;
+    --primary-foreground: 0 0% 95%;
+
+    --secondary: 140 4% 24%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 100 28% 16%;
+    --muted-foreground: 0 0% 95%;
+
+    --accent: 105 79% 52%;
+    --accent-foreground: 250 25% 5%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 95%;
+
+    --border: 140 3% 25%;
+    --input: 140 3% 25%;
+    --ring: 105 79% 52%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 250 25% 5%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 105 79% 52%;
+    --sidebar-primary-foreground: 250 25% 5%;
+    --sidebar-accent: 100 28% 16%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 140 4% 24%;
+    --sidebar-ring: 105 79% 52%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-riftx-black text-riftx-snow;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  .neon-border {
+    @apply border border-riftx-green shadow-[0_0_10px_rgba(110,226,36,0.5)];
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300 hover:shadow-[0_0_15px_rgba(110,226,36,0.7)];
+  }
+}
