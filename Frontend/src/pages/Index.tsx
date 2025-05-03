@@ -49,7 +49,7 @@ const Index = () => {
         <div className="absolute inset-0 bg-riftx-black">
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-20"
-            style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5)' }}
+            style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1542751371-adc38448a05e)' }}
           ></div>
         </div>
         <div className="container mx-auto px-4 relative z-10">
@@ -165,7 +165,7 @@ const Index = () => {
             <p className="text-xl mb-8 text-riftx-snow/90">
               Sign up now and join thousands of gamers in the most exciting tournaments online.
             </p>
-            <Link to="/profile/setup">
+            <Link to="/wallet">
               <Button size="lg" className="bg-riftx-green text-riftx-black hover:bg-riftx-green/90">
                 Get Started
               </Button>

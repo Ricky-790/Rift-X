@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import PageLayout from '@/components/layout/PageLayout';
+import { Tabs as DialogTabs, TabsContent as DialogTabsContent, TabsList as DialogTabsList, TabsTrigger as DialogTabsTrigger } from "@/components/ui/tabs";
+import { Copy } from 'lucide-react';
 
 const TournamentDetailsPage = () => {
   const { id } = useParams();
@@ -16,6 +18,18 @@ const TournamentDetailsPage = () => {
     name: '',
     description: ''
   });
+  const [joinTeamCode, setJoinTeamCode] = useState('');
+  const [generatedTeamCode, setGeneratedTeamCode] = useState('');
+
+  // Function to generate a random team code
+  const generateTeamCode = () => {
+    const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let result = '';
+    for (let i = 0; i < 6; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+  };
 
   // Mock tournament data
   const tournament = {
@@ -72,17 +86,43 @@ const TournamentDetailsPage = () => {
       return;
     }
 
-    // Create team logic would go here
+    // Generate a unique team code
+    const teamCode = generateTeamCode();
+    setGeneratedTeamCode(teamCode);
     
     toast({
       title: "Team Created",
       description: `${newTeamData.name} has been successfully created and registered for ${tournament.title}.`,
     });
+  };
+
+  const handleJoinTeam = () => {
+    // Validation
+    if (!joinTeamCode) {
+      toast({
+        title: "Team code required",
+        description: "Please enter a valid team code to join.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Join team logic would go here
+    
+    toast({
+      title: "Team Joined",
+      description: `You have successfully joined a team for ${tournament.title}.`,
+    });
 
     // Reset form
-    setNewTeamData({
-      name: '',
-      description: ''
+    setJoinTeamCode('');
+  };
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(generatedTeamCode);
+    toast({
+      title: "Code Copied",
+      description: "Team code copied to clipboard.",
     });
   };
 
@@ -131,40 +171,91 @@ const TournamentDetailsPage = () => {
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button className="bg-riftx-green text-riftx-black hover:bg-riftx-green/90">
-                      Register Team
+                      Register or Join Team
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="bg-riftx-olive text-riftx-snow border-riftx-darkgreen">
                     <DialogHeader>
-                      <DialogTitle>Create a New Team for {tournament.title}</DialogTitle>
+                      <DialogTitle>Register for {tournament.title}</DialogTitle>
                     </DialogHeader>
-                    <div className="space-y-4 pt-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="team-name">Team Name*</Label>
-                        <Input
-                          id="team-name"
-                          placeholder="Enter your team name"
-                          className="bg-riftx-black/50 border-riftx-darkgreen text-riftx-snow"
-                          value={newTeamData.name}
-                          onChange={(e) => setNewTeamData({...newTeamData, name: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="team-description">Team Description</Label>
-                        <Input
-                          id="team-description"
-                          placeholder="Describe your team's focus and goals"
-                          className="bg-riftx-black/50 border-riftx-darkgreen text-riftx-snow"
-                          value={newTeamData.description}
-                          onChange={(e) => setNewTeamData({...newTeamData, description: e.target.value})}
-                        />
-                      </div>
-                      <Button 
-                        className="w-full bg-riftx-green text-riftx-black hover:bg-riftx-green/90 mt-4"
-                        onClick={handleCreateTeam}
-                      >
-                        Create & Register Team
-                      </Button>
+                    <div className="pt-4">
+                      <DialogTabs defaultValue="create">
+                      {!generatedTeamCode && (
+                        <DialogTabsList className="bg-riftx-black/30 w-full">
+                        <DialogTabsTrigger value="create">Create a Team</DialogTabsTrigger>
+                        <DialogTabsTrigger value="join">Join a Team</DialogTabsTrigger>
+                        </DialogTabsList>
+                )}
+                        <DialogTabsContent value="create" className="space-y-4 pt-4">
+                          {!generatedTeamCode ? (
+                            <div className="space-y-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="team-name">Team Name*</Label>
+                                <Input
+                                  id="team-name"
+                                  placeholder="Enter your team name"
+                                  className="bg-riftx-black/50 border-riftx-darkgreen text-riftx-snow"
+                                  value={newTeamData.name}
+                                  onChange={(e) => setNewTeamData({...newTeamData, name: e.target.value})}
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="team-description">Team Description</Label>
+                                <Input
+                                  id="team-description"
+                                  placeholder="Describe your team's focus and goals"
+                                  className="bg-riftx-black/50 border-riftx-darkgreen text-riftx-snow"
+                                  value={newTeamData.description}
+                                  onChange={(e) => setNewTeamData({...newTeamData, description: e.target.value})}
+                                />
+                              </div>
+                              <Button 
+                                className="w-full bg-riftx-green text-riftx-black hover:bg-riftx-green/90 mt-4"
+                                onClick={handleCreateTeam}
+                              >
+                                Create & Register Team
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="space-y-4 text-center">
+                              <h3 className="text-lg font-medium">Your Team Code</h3>
+                              <p className="text-sm text-riftx-snow/80">Share this code with your teammates so they can join your team</p>
+                              <div className="relative">
+                                <div className="bg-riftx-black/50 border border-riftx-darkgreen rounded-md p-4 text-center">
+                                  <span className="text-2xl font-bold tracking-widest">{generatedTeamCode}</span>
+                                </div>
+                                <Button 
+                                  className="absolute top-1/2 right-2 transform -translate-y-1/2 h-8 w-8 p-0 bg-transparent hover:bg-riftx-black/20"
+                                  onClick={handleCopyCode}
+                                >
+                                  <Copy className="h-4 w-4" />
+                                  <span className="sr-only">Copy code</span>
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                        </DialogTabsContent>
+                        {!generatedTeamCode && (
+                        <DialogTabsContent value="join" className="space-y-4 pt-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="team-code">Team Code*</Label>
+                            <Input
+                              id="team-code"
+                              placeholder="Enter the team code"
+                              className="bg-riftx-black/50 border-riftx-darkgreen text-riftx-snow"
+                              value={joinTeamCode}
+                              onChange={(e) => setJoinTeamCode(e.target.value)}
+                            />
+                          </div>
+                          <Button 
+                            className="w-full bg-riftx-green text-riftx-black hover:bg-riftx-green/90 mt-4"
+                            onClick={handleJoinTeam}
+                          >
+                            Join Team
+                          </Button>
+                        </DialogTabsContent>
+                         )}
+                      </DialogTabs>
                     </div>
                   </DialogContent>
                 </Dialog>
@@ -320,40 +411,7 @@ const TournamentDetailsPage = () => {
         </div>
       </section>
 
-      {/* Related Tournaments */}
-      <section className="py-8 bg-riftx-black">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-6">Similar Tournaments</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((item) => (
-              <Link to={`/tournaments/${item}`} key={item}>
-                <div className="bg-riftx-olive/20 rounded-lg overflow-hidden hover-glow transition-all duration-300">
-                  <div className="h-32 overflow-hidden">
-                    <img 
-                      src={`https://images.unsplash.com/photo-${item === 1 ? '1605810230434-7631ac76ec81' : item === 2 ? '1488590528505-98d2b5aba04b' : '1649972904349-6e44c42644a7'}`} 
-                      alt="Tournament" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-bold mb-1">
-                      {item === 1 ? 'Valorant Masters' : item === 2 ? 'Call of Duty Warzone Showdown' : 'Fortnite Battle Royale'}
-                    </h3>
-                    <div className="flex justify-between text-sm text-riftx-snow/70">
-                      <span>
-                        {item === 1 ? 'Valorant' : item === 2 ? 'Call of Duty' : 'Fortnite'}
-                      </span>
-                      <span className="text-riftx-green">
-                        {item === 1 ? '$15,000' : item === 2 ? '$8,000' : '$20,000'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      
     </PageLayout>
   );
 };

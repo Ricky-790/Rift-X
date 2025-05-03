@@ -162,7 +162,7 @@ const CreateTournamentPage = () => {
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="startDate">Start Date*</Label>
+                        <Label htmlFor="startDate">Registration Date*</Label>
                         <Input
                           id="startDate"
                           name="startDate"
@@ -174,7 +174,7 @@ const CreateTournamentPage = () => {
                       </div>
                       
                       <div>
-                        <Label htmlFor="registrationDeadline">Registration Deadline*</Label>
+                        <Label htmlFor="registrationDeadline">End Date*</Label>
                         <Input
                           id="registrationDeadline"
                           name="registrationDeadline"
@@ -197,21 +197,7 @@ const CreateTournamentPage = () => {
                           className="bg-riftx-black/50 border-riftx-olive text-riftx-snow"
                           placeholder="e.g. $10,000"
                         />
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="maxTeams">Max Teams</Label>
-                        <Input
-                          id="maxTeams"
-                          name="maxTeams"
-                          type="number"
-                          value={formState.maxTeams}
-                          onChange={handleChange}
-                          className="bg-riftx-black/50 border-riftx-olive text-riftx-snow"
-                          placeholder="e.g. 32"
-                        />
-                      </div>
-                      
+                      </div>                      
                       <div>
                         <Label htmlFor="teamSize">Team Size</Label>
                         <Input

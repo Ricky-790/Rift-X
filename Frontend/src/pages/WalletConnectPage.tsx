@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import PageLayout from '@/components/layout/PageLayout';
+import { Link } from 'react-router-dom';
 
 const WalletConnectPage = () => {
   const { toast } = useToast();
@@ -197,14 +198,26 @@ const WalletConnectPage = () => {
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className="border-t border-riftx-olive/30 pt-4">
-                  <Button 
-                    variant="outline" 
-                    className="border-riftx-olive text-riftx-snow hover:bg-riftx-black/30 w-full" 
-                    onClick={handleDisconnect}
-                  >
-                    Disconnect Wallet
-                  </Button>
+                <CardFooter className="border-t border-riftx-olive/30 pt-4 flex flex-col gap-4">
+                <div className="w-full">
+                  <Link to="/profile/setup" className="w-full block">
+                        <Button 
+                        variant="outline" 
+                        className="border-riftx-olive text-riftx-snow hover:bg-riftx-black/30 w-full"
+                        >
+                        Set Up Profile
+                        </Button>
+                  </Link>
+                </div>
+                <div className="w-full">
+                <Button 
+                        variant="outline" 
+                        className="border-riftx-olive text-riftx-snow hover:bg-riftx-black/30 w-full" 
+                        onClick={handleDisconnect}
+                        >
+                         Disconnect Wallet
+                </Button>
+                </div>
                 </CardFooter>
               </Card>
             )}

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -6,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Camera, UserRound } from "lucide-react";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import PageLayout from '@/components/layout/PageLayout';
 
 const ProfileSetupPage = () => {
@@ -21,40 +21,18 @@ const ProfileSetupPage = () => {
     email: '',
     bio: '',
     country: '',
-    preferredGames: [] as string[],
     twitchUsername: '',
     discordUsername: '',
     twitterUsername: '',
+    profilePicture: '',
   });
 
-  const [gameSearch, setGameSearch] = useState('');
-
-  // Mock list of games
-  const gameOptions = [
-    "Apex Legends", 
-    "Call of Duty", 
-    "Counter-Strike", 
-    "Dota 2", 
-    "FIFA", 
-    "Fortnite", 
-    "Hearthstone", 
-    "League of Legends",
-    "Minecraft",
-    "Overwatch", 
-    "PUBG", 
-    "Rainbow Six Siege", 
-    "Rocket League", 
-    "Starcraft", 
-    "Street Fighter", 
-    "Super Smash Bros",
-    "Valorant", 
-    "World of Warcraft"
+  // Profile picture options
+  const profilePictureOptions = [
+    { url: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9", alt: "Gaming setup" },
+    { url: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1", alt: "Gaming character" },
+    { url: "https://images.unsplash.com/photo-1501286353178-1ec881214838", alt: "Gaming character 2" },
   ];
-
-  // Filter games based on search
-  const filteredGames = gameOptions.filter(game => 
-    game.toLowerCase().includes(gameSearch.toLowerCase())
-  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -65,14 +43,8 @@ const ProfileSetupPage = () => {
     setProfileData(prev => ({ ...prev, [name]: value }));
   };
 
-  const toggleGame = (game: string) => {
-    setProfileData(prev => {
-      if (prev.preferredGames.includes(game)) {
-        return { ...prev, preferredGames: prev.preferredGames.filter(g => g !== game) };
-      } else {
-        return { ...prev, preferredGames: [...prev.preferredGames, game] };
-      }
-    });
+  const handleProfilePictureSelect = (url: string) => {
+    setProfileData(prev => ({ ...prev, profilePicture: url }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -88,17 +60,14 @@ const ProfileSetupPage = () => {
       return;
     }
 
-    // Save profile logic would go here in a real app
-
+    // Save profile and navigate to games setup
     toast({
-      title: "Profile Updated",
-      description: "Your profile has been updated successfully.",
+      title: "Profile Saved",
+      description: "Your profile has been saved. Now let's set up your games.",
     });
 
-    // Navigate to dashboard
-    setTimeout(() => {
-      navigate('/dashboard');
-    }, 1500);
+    // Navigate to game setup
+    navigate('/profile/setup-games');
   };
 
   const handleReset = () => {
@@ -108,10 +77,10 @@ const ProfileSetupPage = () => {
       email: '',
       bio: '',
       country: '',
-      preferredGames: [],
       twitchUsername: '',
       discordUsername: '',
       twitterUsername: '',
+      profilePicture: '',
     });
   };
 
@@ -123,204 +92,146 @@ const ProfileSetupPage = () => {
             <h1 className="text-3xl font-bold mb-6">Set Up Your Profile</h1>
             
             <div className="bg-riftx-olive/20 rounded-lg p-6">
-              <Tabs defaultValue="basic">
-                <TabsList className="bg-riftx-black/30 w-full mb-6">
-                  <TabsTrigger value="basic">Basic Info</TabsTrigger>
-                  <TabsTrigger value="games">Games</TabsTrigger>
-                  <TabsTrigger value="social">Social Media</TabsTrigger>
-                </TabsList>
-                
-                <form onSubmit={handleSubmit}>
-                  <TabsContent value="basic">
-                    <div className="space-y-6">
-                      <div className="flex flex-col md:flex-row gap-6">
-                        <div className="flex-1 space-y-2">
-                          <Label htmlFor="username">Username* (unique identifier)</Label>
-                          <Input
-                            id="username"
-                            name="username"
-                            value={profileData.username}
-                            onChange={handleChange}
-                            className="bg-riftx-black/50 border-riftx-olive text-riftx-snow"
-                            placeholder="e.g. ProGamer123"
-                          />
-                        </div>
-                        
-                        <div className="flex-1 space-y-2">
-                          <Label htmlFor="displayName">Display Name (shown publicly)</Label>
-                          <Input
-                            id="displayName"
-                            name="displayName"
-                            value={profileData.displayName}
-                            onChange={handleChange}
-                            className="bg-riftx-black/50 border-riftx-olive text-riftx-snow"
-                            placeholder="e.g. Pro Gamer"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email Address*</Label>
-                        <Input
-                          id="email"
-                          name="email"
-                          type="email"
-                          value={profileData.email}
-                          onChange={handleChange}
-                          className="bg-riftx-black/50 border-riftx-olive text-riftx-snow"
-                          placeholder="your@email.com"
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="bio">Bio</Label>
-                        <Textarea
-                          id="bio"
-                          name="bio"
-                          value={profileData.bio}
-                          onChange={handleChange}
-                          className="bg-riftx-black/50 border-riftx-olive text-riftx-snow h-32"
-                          placeholder="Tell others about yourself..."
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="country">Country</Label>
-                        <Select value={profileData.country} onValueChange={(value) => handleSelectChange('country', value)}>
-                          <SelectTrigger className="bg-riftx-black/50 border-riftx-olive text-riftx-snow">
-                            <SelectValue placeholder="Select your country" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-riftx-olive text-riftx-snow border-riftx-darkgreen">
-                            {["United States", "Canada", "United Kingdom", "Australia", "Germany", "France", "Japan", "Brazil", "South Korea", "Other"].map((country) => (
-                              <SelectItem key={country} value={country}>
-                                {country}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="pt-4 flex flex-wrap justify-between gap-4">
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          className="border-riftx-olive text-riftx-snow"
-                          onClick={handleReset}
-                        >
-                          Reset
-                        </Button>
-                        <div className="flex gap-2">
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            className="border-riftx-green text-riftx-green"
-                            onClick={() => document.querySelector('[data-value="games"]')?.click()}
-                          >
-                            Next: Games
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="games">
-                    <div className="space-y-6">
-                      <div className="space-y-2">
-                        <Label>Search Games</Label>
-                        <Input
-                          value={gameSearch}
-                          onChange={(e) => setGameSearch(e.target.value)}
-                          className="bg-riftx-black/50 border-riftx-olive text-riftx-snow"
-                          placeholder="Search for games..."
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label>Selected Games ({profileData.preferredGames.length})</Label>
-                        <div className="flex flex-wrap gap-2">
-                          {profileData.preferredGames.length > 0 ? (
-                            profileData.preferredGames.map((game) => (
-                              <div 
-                                key={game} 
-                                className="bg-riftx-green/20 text-riftx-green px-3 py-1 rounded-full flex items-center gap-2"
-                              >
-                                <span>{game}</span>
-                                <button 
-                                  type="button"
-                                  onClick={() => toggleGame(game)}
-                                  className="w-4 h-4 rounded-full bg-riftx-green/30 hover:bg-riftx-green/50 flex items-center justify-center text-xs"
-                                >
-                                  ×
-                                </button>
-                              </div>
-                            ))
+              <form onSubmit={handleSubmit}>
+                <div className="space-y-6">
+                  {/* Profile Picture Section */}
+                  <div className="flex flex-col items-center sm:items-start space-y-4 mb-8">
+                    <Label>Profile Picture</Label>
+                    <div className="flex items-center space-x-4">
+                      <div className="relative">
+                        <Avatar className="w-24 h-24 border-2 border-riftx-green">
+                          {profileData.profilePicture ? (
+                            <AvatarImage src={profileData.profilePicture} alt="Profile" />
                           ) : (
-                            <p className="text-riftx-snow/60 text-sm">No games selected</p>
+                            <AvatarFallback className="bg-riftx-black text-riftx-snow">
+                              <UserRound className="w-12 h-12" />
+                            </AvatarFallback>
                           )}
-                        </div>
-                      </div>
-                      
-                      <Separator className="bg-riftx-olive/30" />
-                      
-                      <div className="space-y-2">
-                        <Label>Available Games</Label>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                          {filteredGames.map((game) => (
-                            <div 
-                              key={game} 
-                              onClick={() => toggleGame(game)}
-                              className={`px-3 py-2 rounded-md cursor-pointer flex items-center gap-2 ${
-                                profileData.preferredGames.includes(game) 
-                                  ? 'bg-riftx-green/20 text-riftx-green' 
-                                  : 'bg-riftx-black/30 text-riftx-snow hover:bg-riftx-black/50'
-                              }`}
+                        </Avatar>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="absolute -bottom-2 -right-2 rounded-full bg-riftx-green text-riftx-black hover:bg-riftx-green/80"
                             >
-                              <div 
-                                className={`w-4 h-4 rounded-sm border ${
-                                  profileData.preferredGames.includes(game) 
-                                    ? 'border-riftx-green bg-riftx-green/30' 
-                                    : 'border-riftx-snow/50'
-                                }`}
-                              >
-                                {profileData.preferredGames.includes(game) && (
-                                  <div className="flex items-center justify-center text-xs">
-                                    ✓
+                              <Camera className="h-4 w-4" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-80 bg-riftx-olive border-riftx-darkgreen p-4">
+                            <div className="space-y-4">
+                              <h4 className="font-medium text-riftx-snow">Select Profile Picture</h4>
+                              <div className="grid grid-cols-3 gap-2">
+                                {profilePictureOptions.map((pic, index) => (
+                                  <div 
+                                    key={index}
+                                    onClick={() => handleProfilePictureSelect(pic.url)}
+                                    className={`cursor-pointer rounded-md overflow-hidden border-2 transition-all ${
+                                      profileData.profilePicture === pic.url 
+                                        ? 'border-riftx-green' 
+                                        : 'border-transparent hover:border-riftx-snow/50'
+                                    }`}
+                                  >
+                                    <img src={pic.url} alt={pic.alt} className="h-16 w-full object-cover" />
                                   </div>
-                                )}
+                                ))}
                               </div>
-                              <span>{game}</span>
+                              {profileData.profilePicture && (
+                                <Button 
+                                  variant="outline" 
+                                  className="w-full text-riftx-snow border-riftx-snow/30 hover:bg-riftx-black/30"
+                                  onClick={() => handleProfilePictureSelect('')}
+                                >
+                                  Remove Picture
+                                </Button>
+                              )}
                             </div>
-                          ))}
-                        </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
-                      
-                      <div className="pt-4 flex flex-wrap justify-between gap-4">
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          className="border-riftx-olive text-riftx-snow"
-                          onClick={() => document.querySelector('[data-value="basic"]')?.click()}
-                        >
-                          Back
-                        </Button>
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          className="border-riftx-green text-riftx-green"
-                          onClick={() => document.querySelector('[data-value="social"]')?.click()}
-                        >
-                          Next: Social Media
-                        </Button>
+                      <div className="text-sm text-riftx-snow/80">
+                        <p>Choose a profile picture from our collection</p>
+                        <p>Your profile picture will be visible to other players</p>
                       </div>
                     </div>
-                  </TabsContent>
+                  </div>
+
+                  {/* Basic Info Section */}
+                  <div className="flex flex-col md:flex-row gap-6">
+                    <div className="flex-1 space-y-2">
+                      <Label htmlFor="username">Username* (unique identifier)</Label>
+                      <Input
+                        id="username"
+                        name="username"
+                        value={profileData.username}
+                        onChange={handleChange}
+                        className="bg-riftx-black/50 border-riftx-olive text-riftx-snow"
+                        placeholder="e.g. ProGamer123"
+                      />
+                    </div>
+                    
+                    <div className="flex-1 space-y-2">
+                      <Label htmlFor="displayName">Display Name (shown publicly)</Label>
+                      <Input
+                        id="displayName"
+                        name="displayName"
+                        value={profileData.displayName}
+                        onChange={handleChange}
+                        className="bg-riftx-black/50 border-riftx-olive text-riftx-snow"
+                        placeholder="e.g. Pro Gamer"
+                      />
+                    </div>
+                  </div>
                   
-                  <TabsContent value="social">
-                    <div className="space-y-6">
-                      <p className="text-riftx-snow/80 mb-4">
-                        Connect your social media accounts to share your gaming achievements and find teammates.
-                      </p>
-                      
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address*</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={profileData.email}
+                      onChange={handleChange}
+                      className="bg-riftx-black/50 border-riftx-olive text-riftx-snow"
+                      placeholder="your@email.com"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="bio">Bio</Label>
+                    <Textarea
+                      id="bio"
+                      name="bio"
+                      value={profileData.bio}
+                      onChange={handleChange}
+                      className="bg-riftx-black/50 border-riftx-olive text-riftx-snow h-24"
+                      placeholder="Tell others about yourself..."
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="country">Country</Label>
+                    <Select value={profileData.country} onValueChange={(value) => handleSelectChange('country', value)}>
+                      <SelectTrigger className="bg-riftx-black/50 border-riftx-olive text-riftx-snow">
+                        <SelectValue placeholder="Select your country" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-riftx-olive text-riftx-snow border-riftx-darkgreen">
+                        {["United States", "Canada", "United Kingdom", "Australia", "Germany", "France", "Japan", "Brazil", "South Korea", "Other"].map((country) => (
+                          <SelectItem key={country} value={country}>
+                            {country}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {/* Social Media Section */}
+                  <div className="pt-6 border-t border-riftx-olive/30">
+                    <h2 className="text-xl font-semibold mb-4">Social Media</h2>
+                    <p className="text-riftx-snow/80 mb-4">
+                      Connect your social media accounts to share your gaming achievements and find teammates.
+                    </p>
+                    
+                    <div className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="twitchUsername">Twitch Username</Label>
                         <div className="relative">
@@ -362,37 +273,28 @@ const ProfileSetupPage = () => {
                           />
                         </div>
                       </div>
-                      
-                      <div className="pt-6 flex flex-wrap justify-between gap-4 border-t border-riftx-olive/30">
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          className="border-riftx-olive text-riftx-snow"
-                          onClick={() => document.querySelector('[data-value="games"]')?.click()}
-                        >
-                          Back
-                        </Button>
-                        <div className="flex gap-2">
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            className="border-riftx-olive text-riftx-snow"
-                            onClick={handleReset}
-                          >
-                            Reset All
-                          </Button>
-                          <Button 
-                            type="submit" 
-                            className="bg-riftx-green text-riftx-black hover:bg-riftx-green/90"
-                          >
-                            Save Profile
-                          </Button>
-                        </div>
-                      </div>
                     </div>
-                  </TabsContent>
-                </form>
-              </Tabs>
+                  </div>
+                  
+                  {/* Action buttons */}
+                  <div className="pt-6 flex flex-wrap justify-between gap-4 border-t border-riftx-olive/30">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      className="border-riftx-olive text-riftx-snow"
+                      onClick={handleReset}
+                    >
+                      Reset All
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      className="bg-riftx-green text-riftx-black hover:bg-riftx-green/90"
+                    >
+                      Save & Continue
+                    </Button>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
