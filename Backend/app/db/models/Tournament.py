@@ -21,10 +21,12 @@ class Tournament(Document):
     """Simplified Tournament model for prototype"""
     title = StringField(required=True)
     organizer = ReferenceField('User', required=True)
+    game = StringField(required=True)
     description = StringField(default='')
     start_date = DateTimeField(required=True)
     end_date = DateTimeField(required=True)
     prize_pool = FloatField(default=0.0)
+    rules = StringField(default='')
     teams = ListField(ReferenceField('Team'))
     
     meta = {
